@@ -3,10 +3,14 @@
 
 import type { OverstoryConfig } from "../types.ts";
 import { ClaudeRuntime } from "./claude.ts";
+import { PiRuntime } from "./pi.ts";
 import type { AgentRuntime } from "./types.ts";
 
 /** Registry of available runtime adapters (name → factory). */
-const runtimes = new Map<string, () => AgentRuntime>([["claude", () => new ClaudeRuntime()]]);
+const runtimes = new Map<string, () => AgentRuntime>([
+	["claude", () => new ClaudeRuntime()],
+	["pi", () => new PiRuntime()],
+]);
 
 /**
  * Resolve a runtime adapter by name.

@@ -611,6 +611,12 @@ describe("ClaudeRuntime integration: registry resolves 'claude' as default", () 
 	test("getRuntime rejects unknown runtimes", async () => {
 		const { getRuntime } = await import("./registry.ts");
 		expect(() => getRuntime("codex")).toThrow('Unknown runtime: "codex"');
-		expect(() => getRuntime("pi")).toThrow('Unknown runtime: "pi"');
+		expect(() => getRuntime("nonexistent")).toThrow('Unknown runtime: "nonexistent"');
+	});
+
+	test("getRuntime resolves 'pi' runtime", async () => {
+		const { getRuntime } = await import("./registry.ts");
+		const piRuntime = getRuntime("pi");
+		expect(piRuntime.id).toBe("pi");
 	});
 });
