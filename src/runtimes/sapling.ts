@@ -281,11 +281,8 @@ export class SaplingRuntime implements AgentRuntime {
 	 * derived from `hooks` — translating overstory guard-rules.ts constants
 	 * into JSON-serializable form for the `sp` CLI to enforce.
 	 *
-	 * When overlay is undefined (hooks-only deployment for coordinator/supervisor/monitor),
-	 * this is a no-op since Sapling has no hook system to deploy.
-	 *
 	 * @param worktreePath - Absolute path to the agent's git worktree
-	 * @param overlay - Overlay content to write as SAPLING.md, or undefined for no-op
+	 * @param overlay - Overlay content to write as SAPLING.md, or undefined for hooks-only deployment
 	 * @param hooks - Agent identity, capability, and quality gates for guard config
 	 */
 	async deployConfig(
@@ -293,15 +290,15 @@ export class SaplingRuntime implements AgentRuntime {
 		overlay: OverlayContent | undefined,
 		hooks: HooksDef,
 	): Promise<void> {
-		if (!overlay) return;
+		// Write SAPLING.md instruction file (only when overlay is provided).
+		if (overlay) {
+			const saplingPath = join(worktreePath, this.instructionPath);
+			await mkdir(dirname(saplingPath), { recursive: true });
+			await Bun.write(saplingPath, overlay.content);
+		}
 
-		// Write SAPLING.md instruction file.
-		const saplingPath = join(worktreePath, this.instructionPath);
-		await mkdir(dirname(saplingPath), { recursive: true });
-		await Bun.write(saplingPath, overlay.content);
-
-		// Write .sapling/guards.json with full guard configuration.
-		// Translates overstory guard-rules.ts constants into JSON for the `sp` CLI.
+		// Always write .sapling/guards.json — even when overlay is undefined
+		// (hooks-only deployment for coordinator/supervisor/monitor).
 		const guardsPath = join(worktreePath, ".sapling", "guards.json");
 		await mkdir(dirname(guardsPath), { recursive: true });
 		await Bun.write(guardsPath, `${JSON.stringify(buildGuardsConfig(hooks), null, 2)}\n`);

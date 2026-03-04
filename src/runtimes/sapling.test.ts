@@ -405,7 +405,7 @@ describe("SaplingRuntime", () => {
 			expect(exists).toBe(true);
 		});
 
-		test("no-op when overlay is undefined", async () => {
+		test("skips SAPLING.md but writes guards.json when overlay is undefined", async () => {
 			const worktreePath = join(tempDir, "worktree");
 			const hooks: HooksDef = {
 				agentName: "coordinator",
@@ -419,7 +419,7 @@ describe("SaplingRuntime", () => {
 			expect(await Bun.file(saplingPath).exists()).toBe(false);
 
 			const guardsPath = join(worktreePath, ".sapling", "guards.json");
-			expect(await Bun.file(guardsPath).exists()).toBe(false);
+			expect(await Bun.file(guardsPath).exists()).toBe(true);
 		});
 
 		test("creates nested directories if they do not exist", async () => {
