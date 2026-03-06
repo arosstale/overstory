@@ -825,8 +825,25 @@
 			"overstory-1b69",
 			"overstory-3137"
 		],
-		"status": "active",
+		"status": "completed",
 		"createdAt": "2026-03-06T00:49:40.589Z",
+		"completedAt": "2026-03-06T01:06:21.147Z"
+	},
+	{
+		"id": "group-3e7bfc32",
+		"name": "high-priority-bugfix-batch",
+		"memberIssueIds": [
+			"overstory-0480",
+			"overstory-d331",
+			"overstory-fe42",
+			"overstory-3c76",
+			"overstory-adc5",
+			"overstory-5c08",
+			"overstory-0552",
+			"overstory-7738"
+		],
+		"status": "active",
+		"createdAt": "2026-03-06T14:07:43.286Z",
 		"completedAt": null
 	}
 ]
