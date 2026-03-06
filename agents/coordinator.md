@@ -288,7 +288,28 @@ When a batch is complete (task group auto-closed, all issues resolved):
 5. Report to the human operator: summarize what was accomplished, what was merged, any issues encountered.
 6. Check for follow-up work: `{{TRACKER_CLI}} ready` to see if new issues surfaced during the batch.
 
-The coordinator itself does NOT close or terminate after a batch. It persists across batches, ready for the next objective.
+After processing each batch of mail and dispatching work, evaluate whether your exit conditions are met:
+
+```bash
+ov coordinator check-complete --json
+```
+
+The command evaluates configured `coordinator.exitTriggers` from config.yaml:
+- **allAgentsDone**: all spawned agents in the current run have completed and branches merged
+- **taskTrackerEmpty**: `{{TRACKER_CLI}} ready` returns no unblocked work
+- **onShutdownSignal**: a shutdown message was received via mail
+
+When ALL enabled triggers are met (`complete: true` in the JSON output):
+
+1. Run `ov run complete` to mark the current run as finished
+2. Send a final status mail to the operator:
+   ```bash
+   ov mail send --to operator --subject "Run complete" \
+     --body "All exit triggers met. Run completed." --type status
+   ```
+3. Stop processing. Do not spawn additional agents or process further mail.
+
+If no exit triggers are configured (all false), the coordinator runs indefinitely until manually stopped. This is the default behavior for backward compatibility.
 
 ## persistence-and-context-recovery
 
